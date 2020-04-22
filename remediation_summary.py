@@ -10,6 +10,9 @@ import itertools
 import os
 from getpass import getpass
 from datetime import datetime
+import logging
+
+#logging.basicConfig(level=logging.DEBUG)
 
 now = datetime.now()
 time = now.strftime("%d%m%Y_%H%M")
@@ -110,10 +113,10 @@ def get_solutions(sc, query):
   remediationList = {}
   remediationSummary = {}
   i = 1
-  for vuln in sc.analysis.vulns(query_id=query, tool='sumremediation'):
+  for vuln in sc.analysis.vulns(query_id=query, tool='sumremediation', source="cumulative"):
     solutions[i] = vuln['solution']
     remediationList[i] = vuln['remediationList'].split(",")
-    remediationSummary_list = (vuln['solution'].strip(), vuln['total'].strip().replace("'", ""), vuln['totalPctg'].strip().strip("'"), vuln['hostTotal'].strip().strip("'"), vuln['cveTotal'].strip().strip("'"), vuln['vprScore'].strip().strip("'"))
+    remediationSummary_list = (vuln['solution'].strip(), vuln['total'].strip().replace("'", ""), vuln['scorePctg'].strip().strip("'"), vuln['hostTotal'].strip().strip("'"), vuln['cveTotal'].strip().strip("'"), vuln['vprScore'].strip().strip("'"))
     remediationSummary[i] = list(remediationSummary_list)
     i = i +1
   s = open("solutions.txt", "a")
@@ -191,7 +194,7 @@ def get_final_remediation_summary(remediationSummary, solutionToIP, vulnDetails,
   frs_name = username + "_" + time + "_finalRemediationSummary_" +  str(unique_or_all) + ".csv"
   frs = open(str(frs_name), "a")
   vulnDetails_str = ""
-  sort = list({k: v for k, v in sorted(remediationSummary.items(), key=lambda item: int(float(item[1][2].strip("%")) * 100), reverse=True)})
+  sort = list({k: v for k, v in sorted(remediationSummary.items(), key=lambda item: int(float(item[1][2].strip("%").strip("<")) * 100), reverse=True)})
   for item in sort:
     solution_header = "Solution, Total number of vulnerabilities, Risk Reduction, Hosts Affected, CVEs, Highest VPR Score\r"
     frs.write(solution_header)
