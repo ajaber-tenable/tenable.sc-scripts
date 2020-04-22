@@ -266,7 +266,7 @@ def main():
   solutionToIP = map_ip_solutions(remediationList, vulnPluginToIP, unique_or_all)
   file_name = get_final_remediation_summary(remediationSummary, solutionToIP, vulnDetails, unique_or_all, username)
   get_solutions_stats(solutionToIP, remediationList, vulnPluginToIP)
-  print ("Report filename is: " + str(file_name) + "\r")
+  print ("Report filename: " + str(file_name) + "\r")
 
 if __name__ == "__main__":
   try:
